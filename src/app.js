@@ -63,11 +63,12 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+
 const bodyEl = document.querySelector('body');
 const galleryContainer = document.querySelector('.js-gallery');
 const modal = document.querySelector('.js-lightbox');
 const overlay = document.querySelector('.lightbox__overlay');
-const modalContent = document.querySelector('.lightbox__content');
 const modalImg = document.querySelector('.lightbox__image');
 const modalBtnClose = document.querySelector('[data-action="close-lightbox"]');
 
@@ -94,78 +95,87 @@ function onGalleryContainerClick(event) {
   if (!isGalleryImg) {
     return;
   }
+
   modal.classList.add("is-open");
   bodyEl.classList.add('is-open');//убирает скролл при открытой модалке
   modalImg.src = event.target.dataset.source;
   // console.log(modalImg.src);
   modalImg.alt = event.target.alt;
   // console.log(modalImg.alt);
-  modalImg.dataset.index = event.target.dataset.index;
-  console.log(modalImg.dataset.index);
-
+  
+ 
 };
 
 modalBtnClose.addEventListener("click", modalClose);
 overlay.addEventListener('click', modalClose);
-window.addEventListener('keyup', modalCloseByEscape);
-// window.addEventListener('keydown', onArrowLeft);
-// window.addEventListener('keydown', onArrowRight);
+window.addEventListener('keydown', modalCloseByEscape);
+window.addEventListener('keydown', onLeftRightArrow);
 
-function modalClose (event) {
+
+function modalClose(event) {
   modal.classList.remove("is-open");
   bodyEl.classList.remove('is-open');//добавляет скролл при закрытой модалке
   modalImg.src = "";
   modalImg.alt = "";
-};
+  };
 
 function modalCloseByEscape(event) {
   if (event.code === "Escape") {
-    modalClose(event);
+    modalClose();
   }
 };
 
-
-// function onArrowLeft(event) {
-//   if (event.code === "ArrowLeft") {
-//     onLeft();
-//   }
-// };
-
-window.addEventListener('keydown', event => {
-  if (event.code === 'ArrowLeft') {
-    onArrowLeft();
+function onLeftRightArrow(event) {
+  const isModalOpen = modal.classList.contains("is-open");//проверка открыто ли модальное окно
+  if (!isModalOpen) {
+    return;
   }
-  if (event.code === 'ArrowRight') {
-    onArrowRight();
-  }
-});
+//находим индекс картинки
+    let imgIndex = galleryItems.findIndex(img => img.original === modalImg.src);
+  
+//Пролистывание изображений галереи в открытом модальном окне клавишей "влево".
+    if (event.code === 'ArrowLeft') {
+        if (imgIndex === 0) {
+            imgIndex += galleryItems.length;
+        }
+        imgIndex -= 1;
+    };
+//Пролистывание изображений галереи в открытом модальном окне клавишей "вправо".
+    if (event.code === 'ArrowRight' ) {
+        if (imgIndex === galleryItems.length - 1) {
+            imgIndex -= galleryItems.length;
+        }
+        imgIndex += 1;
+    };
 
-// function onArrowRight(event) {
+    modalImg.src = galleryItems[imgIndex].original;
+    modalImg.alt = galleryItems[imgIndex].description;
+
+};
+
+
+
+
+
+//перелистывание через цикл - но картинки не листаются постоянно, а останавливаются на первой и последней
 //   if (event.code === "ArrowRight") {
-//     onRight();
+
+//     for (let i = 0; i < galleryItems.length; i++) {
+//       if (modalImg.src === galleryItems[i].original) {
+//         modalImg.src = galleryItems[(i += 1)].original
+//       }
+//     }
 //   }
+
+//     if (event.code === "ArrowLeft") {
+
+//       for (let i = 0; i < galleryItems.length; i++) {
+//         if (modalImg.src === galleryItems[i].original) {
+//           modalImg.src = galleryItems[(i-=1)].original
+//         }
+      
+//       }
+//       }
 // };
 
-function onArrowLeft() {
-  let index = +modalImg.dataset.index;
-  if (index === 0) {
-    newSrc(pictures.length - 1);
-    
-    return;
-  }
-  newSrc(index, -1);
-};
 
-function onArrowRight() {
-  let index = +modalImg.dataset.index;
-  if (index === pictures.length - 1) {
-    newSrc(0);
-    return;
-  }
-  newSrc(index, 1);
-};
-
-function newSrc(index, step = 0) {
-  modalImg.dataset.index = `${index + step}`;
-  modalImg.src = pictures[index + step].original;
-};
