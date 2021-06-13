@@ -90,7 +90,10 @@ galleryContainer.addEventListener('click', onGalleryContainerClick);
 
 function onGalleryContainerClick(event) {
   event.preventDefault();
-  
+  window.addEventListener('keydown', modalCloseByEscape);
+  window.addEventListener('keydown', onLeftRightArrow);
+  modalBtnClose.addEventListener("click", modalClose);
+  overlay.addEventListener('click', modalClose);
   const isGalleryImg = event.target.classList.contains('gallery__image');
   if (!isGalleryImg) {
     return;
@@ -106,10 +109,10 @@ function onGalleryContainerClick(event) {
  
 };
 
-modalBtnClose.addEventListener("click", modalClose);
-overlay.addEventListener('click', modalClose);
-window.addEventListener('keydown', modalCloseByEscape);
-window.addEventListener('keydown', onLeftRightArrow);
+// modalBtnClose.addEventListener("click", modalClose);
+// overlay.addEventListener('click', modalClose);
+// window.addEventListener('keydown', modalCloseByEscape);
+// window.addEventListener('keydown', onLeftRightArrow);
 
 
 function modalClose(event) {
@@ -117,12 +120,19 @@ function modalClose(event) {
   bodyEl.classList.remove('is-open');//добавляет скролл при закрытой модалке
   modalImg.src = "";
   modalImg.alt = "";
+  window.removeEventListener('keydown', onLeftRightArrow);
+  window.removeEventListener('keydown', modalCloseByEscape);
+  modalBtnClose.removeEventListener("click", modalClose);
+  overlay.removeEventListener('click', modalClose);
+  
+  
   };
 
 function modalCloseByEscape(event) {
   if (event.code === "Escape") {
     modalClose();
-  }
+    
+    }
 };
 
 function onLeftRightArrow(event) {
@@ -149,7 +159,8 @@ function onLeftRightArrow(event) {
     };
 
     modalImg.src = galleryItems[imgIndex].original;
-    modalImg.alt = galleryItems[imgIndex].description;
+  modalImg.alt = galleryItems[imgIndex].description;
+  
 
 };
 
