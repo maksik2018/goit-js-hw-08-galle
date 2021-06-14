@@ -90,15 +90,15 @@ galleryContainer.addEventListener('click', onGalleryContainerClick);
 
 function onGalleryContainerClick(event) {
   event.preventDefault();
-  window.addEventListener('keydown', modalCloseByEscape);
-  window.addEventListener('keydown', onLeftRightArrow);
-  modalBtnClose.addEventListener("click", modalClose);
-  overlay.addEventListener('click', modalClose);
+
   const isGalleryImg = event.target.classList.contains('gallery__image');
   if (!isGalleryImg) {
     return;
   }
-
+  window.addEventListener('keydown', modalCloseByEscape);
+  window.addEventListener('keydown', onLeftRightArrow);
+  modalBtnClose.addEventListener("click", modalClose);
+  overlay.addEventListener('click', modalClose);
   modal.classList.add("is-open");
   bodyEl.classList.add('is-open');//убирает скролл при открытой модалке
   modalImg.src = event.target.dataset.source;
@@ -116,6 +116,10 @@ function onGalleryContainerClick(event) {
 
 
 function modalClose(event) {
+  const isModalOpen = modal.classList.contains("is-open");//проверка открыто ли модальное окно
+  if (!isModalOpen) {
+    return;
+  }
   modal.classList.remove("is-open");
   bodyEl.classList.remove('is-open');//добавляет скролл при закрытой модалке
   modalImg.src = "";
@@ -166,8 +170,6 @@ function onLeftRightArrow(event) {
 
 
 
-
-
 //перелистывание через цикл - но картинки не листаются постоянно, а останавливаются на первой и последней
 //   if (event.code === "ArrowRight") {
 
@@ -188,5 +190,4 @@ function onLeftRightArrow(event) {
 //       }
 //       }
 // };
-
 
